@@ -1,6 +1,7 @@
 package com.study.base.boot.aggregations.v1.order.presentation;
 
 import com.study.base.boot.config.annotations.Get;
+import com.study.base.boot.config.annotations.Post;
 import com.study.base.boot.config.annotations.RestApi;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -14,7 +15,7 @@ public class OrderController {
         return List.of("A", "B", "C");
     }
 
-    @Get
+    @Post
     public List<String> createOrders(@RequestBody List<String> request) {
         return List.copyOf(request);
     }

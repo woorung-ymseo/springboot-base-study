@@ -1,0 +1,6 @@
+FROM mysql:8.1
+ENV APP mysql-docke
+ENV MYSQL_USER study
+ENV MYSQL_PASSWORD studydocker1!
+ENV MYSQL_ROOT_PASSWORD studydocker1!
+ENV MYSQL_DATABASE sutdy

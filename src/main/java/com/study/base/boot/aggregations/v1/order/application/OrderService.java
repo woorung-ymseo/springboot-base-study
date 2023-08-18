@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -21,9 +24,17 @@ public class OrderService {
                 .build()
                 .patch(createOrder)
                 .create(orderRepository);
-
-        log.info("id : {}", orderAggregate.getId());
     }
+
+    @Transactional
+    public List<Long> creates(List<CreateOrder> createOrders) {
+        final var orders = OrderAggregate.creates(orderRepository, createOrders);
+
+        return orders.stream()
+                .map(OrderAggregate::getId)
+                .collect(Collectors.toList());
+    }
+
 }
 
 

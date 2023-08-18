@@ -2,8 +2,11 @@ package com.study.base.boot.aggregations.v1.order.presentation.dto.req;
 
 import com.study.base.boot.aggregations.v1.order.application.dto.req.CreateOrder;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Builder
@@ -15,11 +18,17 @@ public class CreateOrderDto {
 
     @NotNull
     private String orderName;
+
+    @PositiveOrZero
     private int price;
+
+    @PositiveOrZero
     private int deliveryFee;
 
     @NotNull
     private String address;
+
+    @PositiveOrZero
     private long userId;
 
 //    @NotNull

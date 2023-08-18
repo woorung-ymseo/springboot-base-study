@@ -9,8 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Table(catalog = "base", name ="order")
 @Entity
@@ -35,8 +38,19 @@ public class OrderAggregate {
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
-    public void changePrice(int p) {
-        this.price = p;
+    public static final List<OrderAggregate> creates(OrderRepository orderRepository, List<CreateOrder> createOrders) {
+        Assert.notEmpty(createOrders, "createOrders is null");
+
+        final var orders = createOrders.stream()
+                .map(createOrder ->
+                        OrderAggregate.builder()
+                                .build()
+                                .patch(createOrder)
+                ).collect(Collectors.toList());
+
+        orderRepository.saveAll(orders);
+
+        return orders;
     }
 
     public OrderAggregate create(OrderRepository orderRepository) {

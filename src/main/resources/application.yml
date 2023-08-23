@@ -35,5 +35,11 @@ springdoc:
     display-query-params-without-oauth2: true
 
 
+logging:
+  level:
+    org:
+      hibernate:
+        orm.jdbc.bind: trace # hibernate core 6.x
+#        type.descriptor.sql.BasicBinder: trace # hibernate core 5.x
 
 

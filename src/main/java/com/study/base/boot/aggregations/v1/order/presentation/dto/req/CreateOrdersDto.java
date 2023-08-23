@@ -15,13 +15,15 @@ import java.util.stream.Collectors;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateOrdersDto {
 
     @Valid
-    private List<CreateOrderDto> createOrders;
+    private List<CreateOrderDto> orders;
 
     public List<CreateOrder> toCreateOrders() {
-        return this.createOrders.stream()
+        return this.orders.stream()
                 .map(CreateOrderDto::toCreate)
                 .collect(Collectors.toList());
     }

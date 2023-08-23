@@ -1,17 +1,22 @@
 package com.study.base.boot.aggregations.v1.order.domain;
 
 import com.study.base.boot.aggregations.v1.order.application.dto.req.CreateOrder;
+import com.study.base.boot.aggregations.v1.order.domain.entity.OrderItemEntity;
+import com.study.base.boot.aggregations.v1.order.domain.enumerations.OrderItemStatusEnum;
+import com.study.base.boot.aggregations.v1.order.domain.enumerations.OrderStatusEnum;
 import com.study.base.boot.aggregations.v1.order.infrastructure.repository.OrderRepository;
+import com.study.base.boot.config.entity.order.AbstractOrder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.util.Assert;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,23 +25,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
-@Builder
+@SuperBuilder
 @Getter
-public class OrderAggregate {
+public class OrderAggregate extends AbstractOrder {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String orderNumber;
-    private String orderName;
-    private String status;
-    private int price;
-    private int deliveryFee;
-    private String address;
-    private long userId;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderItemEntity> items;
 
     public static final List<OrderAggregate> creates(OrderRepository orderRepository, List<CreateOrder> createOrders) {
         Assert.notEmpty(createOrders, "createOrders is null");
@@ -66,7 +60,26 @@ public class OrderAggregate {
         this.deliveryFee = createOrder.getDeliveryFee();
         this.address = StringUtils.defaultIfEmpty(createOrder.getOrderNumber(), this.address);
         this.userId = createOrder.getUserId();
-        this.createdDate = LocalDateTime.now();
+
+        createOrder.getItems()
+                .forEach(item -> this.addItem(
+                        OrderItemEntity.builder()
+                                .build()
+                                .patch(item)
+                ));
+
+        return this;
+    }
+
+    public OrderAggregate addItem(OrderItemEntity orderItem) {
+        Assert.notNull(orderItem, "orderItem is null");
+
+        if (this.getItems() == null) {
+            this.items = new ArrayList<>();
+        }
+
+        orderItem.putOrder(this);
+        this.items.add(orderItem);
 
         return this;
     }

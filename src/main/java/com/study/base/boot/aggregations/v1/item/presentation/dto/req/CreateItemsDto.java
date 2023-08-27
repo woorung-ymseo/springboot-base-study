@@ -1,6 +1,6 @@
-package com.study.base.boot.aggregations.v1.order.presentation.dto.req;
+package com.study.base.boot.aggregations.v1.item.presentation.dto.req;
 
-import com.study.base.boot.aggregations.v1.order.application.dto.req.CreateOrder;
+import com.study.base.boot.aggregations.v1.item.application.dto.req.CreateItem;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,23 +12,20 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrdersDto {
+public class CreateItemsDto {
 
     @NotNull
     @Size(min = 1)
     @Valid
-    private List<CreateOrderDto> orders;
+    private List<CreateItemDto> items;
 
-    public List<CreateOrder> toCreateOrders() {
-        return this.orders.stream()
-                .map(CreateOrderDto::toCreate)
+    public List<CreateItem> toCreateItems() {
+        return this.items.stream()
+                .map(CreateItemDto::toCreate)
                 .collect(Collectors.toList());
     }
 }
-
-

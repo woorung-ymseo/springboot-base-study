@@ -29,11 +29,6 @@ public class OrderService {
     @Transactional
     public List<Long> creates(List<CreateOrder> createOrders) {
         final var orders = OrderAggregate.creates(orderRepository, createOrders);
-//
-//        for (OrderAggregate o : orders) {
-//            o.addItem();
-//        }
-
 
         return orders.stream()
                 .map(OrderAggregate::getId)

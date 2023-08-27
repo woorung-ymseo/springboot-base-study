@@ -2,13 +2,10 @@ package com.study.base.boot.aggregations.v1.order.domain;
 
 import com.study.base.boot.aggregations.v1.order.application.dto.req.CreateOrder;
 import com.study.base.boot.aggregations.v1.order.domain.entity.OrderItemEntity;
-import com.study.base.boot.aggregations.v1.order.domain.enumerations.OrderItemStatusEnum;
-import com.study.base.boot.aggregations.v1.order.domain.enumerations.OrderStatusEnum;
 import com.study.base.boot.aggregations.v1.order.infrastructure.repository.OrderRepository;
 import com.study.base.boot.config.entity.order.AbstractOrder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -29,7 +26,7 @@ import java.util.stream.Collectors;
 @Getter
 public class OrderAggregate extends AbstractOrder {
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<OrderItemEntity> items;
 
     public static final List<OrderAggregate> creates(OrderRepository orderRepository, List<CreateOrder> createOrders) {

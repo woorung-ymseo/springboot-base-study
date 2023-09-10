@@ -22,4 +22,8 @@ public class Person {
     public boolean isDead() {
         return isDead;
     }
+
+    public void endOfLife() {
+        this.isDead = true;
+    }
 }

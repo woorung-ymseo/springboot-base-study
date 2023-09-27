@@ -13,8 +13,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface OrderEDMapper extends SupportEntityToDtoMapper<OrderAggregate, OrderDto> {
 
-    @Condition
-    default boolean isLazyLoaded(List<? extends BaseEntity> entities) {
-        return isLoaded(entities);
-    }
+//    @Condition
+//    default boolean isLazyLoaded(List<? extends BaseEntity> entities) {
+//        return isLoaded(entities);
+//    }
 }

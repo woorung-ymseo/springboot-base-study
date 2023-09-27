@@ -1,27 +1,21 @@
 package com.study.base.boot.aggregations.v1.order.presentation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study.base.boot.aggregations.v1.order.application.OrderService;
-import com.study.base.boot.aggregations.v1.order.application.dto.req.CreateOrder;
+import com.study.base.boot.aggregations.v1.order.application.dto.req.GetOrder;
 import com.study.base.boot.aggregations.v1.order.domain.OrderAggregate;
-import com.study.base.boot.aggregations.v1.order.domain.entity.OrderItemEntity;
 import com.study.base.boot.aggregations.v1.order.domain.enumerations.OrderStatusEnum;
-import com.study.base.boot.aggregations.v1.order.presentation.dto.req.CreateOrderDto;
 import com.study.base.boot.aggregations.v1.order.presentation.dto.req.CreateOrdersDto;
+import com.study.base.boot.aggregations.v1.order.presentation.dto.req.GetOrderDto;
 import com.study.base.boot.aggregations.v1.order.presentation.dto.res.OrderDto;
-import com.study.base.boot.aggregations.v1.order.presentation.dto.res.OrderItemDto;
 import com.study.base.boot.aggregations.v1.order.presentation.mapper.OrderEDMapper;
 import com.study.base.boot.config.annotations.Get;
+import com.study.base.boot.config.annotations.Patch;
 import com.study.base.boot.config.annotations.Post;
 import com.study.base.boot.config.annotations.RestApi;
-import com.study.base.boot.config.mapstruct.mapper.SupportEntityToDtoMapper;
+import com.study.base.boot.config.controller.SupportController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,11 +27,22 @@ import java.util.stream.Collectors;
 @RestApi("/v1/orders")
 @Slf4j
 @RequiredArgsConstructor
-public class OrderController {
+public class OrderController extends SupportController {
 
     private final OrderService orderService;
 
     private final OrderEDMapper orderEDMapper;
+
+    @Get
+    public Page<OrderDto> getOrders(
+            GetOrderDto request,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        final GetOrder getOrder = request.toGetOrder(pageable);
+        final Page<OrderAggregate> pageOrders = orderService.list(getOrder);
+
+        return response(orderEDMapper, pageOrders, pageable);
+    }
 
     @Get("/{id}")
     public OrderDto getOrder(@PathVariable long id) {
@@ -68,6 +73,14 @@ public class OrderController {
         final var ids = orderService.creates(create);
 
         return ids;
+    }
+
+    @Patch("/{id}/status/{status}")
+    public void changeOrderStatus(
+            @PathVariable long id,
+            @PathVariable OrderStatusEnum status
+    ) {
+        orderService.changeStatus(id, status);
     }
 }
 

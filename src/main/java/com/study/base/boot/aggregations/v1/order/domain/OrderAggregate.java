@@ -2,6 +2,7 @@ package com.study.base.boot.aggregations.v1.order.domain;
 
 import com.study.base.boot.aggregations.v1.order.application.dto.req.CreateOrder;
 import com.study.base.boot.aggregations.v1.order.domain.entity.OrderItemEntity;
+import com.study.base.boot.aggregations.v1.order.domain.enumerations.OrderStatusEnum;
 import com.study.base.boot.aggregations.v1.order.infrastructure.repository.OrderRepository;
 import com.study.base.boot.config.entity.order.AbstractOrder;
 import jakarta.persistence.*;
@@ -10,11 +11,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Or;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.util.Assert;
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Table(catalog = "base", name ="order")
@@ -79,5 +83,13 @@ public class OrderAggregate extends AbstractOrder {
         this.items.add(orderItem);
 
         return this;
+    }
+
+    public void changeOrder() {
+        this.status = OrderStatusEnum.ORDER;
+    }
+
+    public void changeCanceled() {
+        this.status = OrderStatusEnum.CANCELED;
     }
 }
